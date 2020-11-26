@@ -27,7 +27,7 @@ public class Client {
     @Path("js/{path}")
     @Produces({"text/javascript"})
     public byte[] getJavaScriptFile(@PathParam("path") String path) {
-        return getFile("client/js/" + path);
+        return getFile("client/scripts/" + path);
     }
 
     @GET
