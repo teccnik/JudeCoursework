@@ -2,9 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+
+    <script>
+        "use strict";
+
+        function pUserLogin() {
+            console.log("pUserLogin() Invoked. ");
+            var formData = new FormData(document.getElementById('loginForm'));
+            var url = "user/login";
+
+            fetch(url, {
+                method: "POST", body: formData,
+            }).then(response => {
+                return response.json();
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                    alert("Username & Password unrecognised.");
+                } else {
+                    Cookies.set("sessionToken",response.sessionToken);
+                    window.open("index.html","_self");
+                }
+            });
+        }
+        function formValidate() {
+            console.log("formValidate() Invoked.");
+            let valid=true;
+
+            document.getElementById("usernameValidationText").innerHTML = "";
+            document.getElementById("passwordValidationText").innerHtml = ""; //validation messages disappear if re-validated
+            if (document.getElementById("username").value==""){
+                document.getElementById("usernameValidationText").innerHTML = "Please enter your username.";
+                valid = false;
+            }
+            if(!document.getElementById("password").checkValidity()) {
+                document.getElementById("passwordValidationText").innerHTML = "Please enter your password.";
+                valid = false;
+            }
+            if (valid===true) {
+                pUserLogin()
+            }
+        }
+    </script>
+
 </head>
-<body>
+<body class="center">
+<img src="img/WYLT%20logo.png" alt="WYLT logo" class="logo">
+<ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="forumHome.html">Forum</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="uploadTrack.html">Upload Track</a></li>
+    <li><a href="user.html">User</a></li>
+</ul>
+<br><br>
+<form id="loginForm">
+    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+    <div id="usernameValidationText"></div>
+
+    <input type="password" id="password" name="password" class="form-control" placeholder="Password" pattern=".{8,16}" required>
+    <div id="passwordValidationText"></div>
+</form>
+<button class="button" onclick="formValidate();">LOGIN</button>
+<br>
+
+<button class="button" onclick=window.open("newUser.html","_self")>NEW USER</button>
 
 </body>
 </html>

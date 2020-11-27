@@ -7,10 +7,10 @@ h1 {
 ul {
     position: fixed;
     top: 0;
-    width: 100%;
+    width: 250%;
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 10px;
     overflow: hidden;
     background-color: #333;
 }
@@ -21,9 +21,13 @@ li a {
     display: block;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 8px 28px;
     text-decoration: none;
 }
 li a:hover {
     background-color:#111;
+}
+.logo {
+    height: 25%;
+    width: 25%;
 }

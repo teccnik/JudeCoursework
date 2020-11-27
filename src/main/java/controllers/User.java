@@ -29,25 +29,37 @@ public class User {
     public String userLogin(@FormDataParam("username") String username, @FormDataParam("password") String password) {
         System.out.println("User.userLogin() invoked with username " + username + " and password " + password);
 
-        int userID = getUserID(username, password);
-        System.out.println("UserID = " + userID);
-        if (userID == -1) {
-            return "{\"Error\": \"Username or password is incorrect. Have you registered? \"}";
-        }
-        String uuid = UUID.randomUUID().toString();
-        String result = updateUUIDinDB(userID, uuid);
-        System.out.println("Generated uuid: " + uuid);
-        if (result.equals("OK")) {
-            JSONObject userDetails = new JSONObject();
-            userDetails.put("sessionToken", uuid);
-            return userDetails.toString();
-        } else {
-            return "{\"Error\" \"Something went wrong! Please contact our admins, with error code of U-ULG \"}";
+        try {
+            PreparedStatement ps1 = Main.db.prepareStatement("SELECT password FROM Users WHERE username = ?");
+            ps1.setString(1,username);
+            ResultSet loginResults = ps1.executeQuery();
+            if (loginResults.next() == true) {
+                String correctPassword = loginResults.getString(1);
+                if (password.equals(correctPassword)) {
+                    String sessionToken = UUID.randomUUID().toString();
+                    PreparedStatement ps2 = Main.db.prepareStatement("UPDATE Users SET sessionToken = ? WHERE username = ?");
+                    ps2.setString(1,sessionToken);
+                    ps2.setString(2, username);
+                    ps2.executeUpdate();
+                    JSONObject userDetails = new JSONObject();
+                    userDetails.put("username",username);
+                    userDetails.put("sessionToken",sessionToken);
+                    return userDetails.toString();
+                } else {
+                    return "{\"Error\": \"Incorrect Password!\"}";
+                }
+            } else {
+                return "{\"Error\": \"Username & Password are incorrect. \"}";
+            }
+        } catch (Exception exception) {
+            System.out.println("Database error during /user/login: " + exception.getMessage());
+            return "{\"Error\": \"Server side error.\"}";
         }
 
     }
-
-    public static int getUserID(String username, String password) {
+    @POST
+    @Path("userid")
+    public static int getUserID(@FormDataParam("username") String username, @FormDataParam("password") String password) {
         System.out.println("User.getUserID() Invoked");
         try {
             PreparedStatement statement = Main.db.prepareStatement( "SELECT UserID FROM Users WHERE username = ? AND password = ?");
@@ -80,18 +92,15 @@ public class User {
         }
     }
 
-    public static int validateSessionToken(Cookie sessionToken) {
-        String uuid = sessionToken.getValue();
-        System.out.println("User.validateSessionToken() Invoked, with value " + uuid);
+    public static boolean validateSessionToken(String sessionToken) {
         try {
-            PreparedStatement statement = Main.db.prepareStatement("SELECT UserID FROM Users WHERE sessionToken = ?");
-            statement.setString(1,uuid);
-            ResultSet resultSet = statement.executeQuery();
-            System.out.println("userID is " +resultSet.getInt("UserID"));
-            return resultSet.getInt("UserID");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return -1;
+            PreparedStatement ps = Main.db.prepareStatement("SELECT userID FROM Users WHERE sessionToken =?");
+            ps.setString(1,sessionToken);
+            ResultSet logoutResults = ps.executeQuery();
+            return logoutResults.next();
+        } catch (Exception exception) {
+            System.out.println("Database error" + exception.getMessage());
+            return false;
         }
     }
 
@@ -152,7 +161,7 @@ public class User {
             return "{\"Error\": \"Something went wrong! Please contact an admin. (U-UGT)\"}";
         }
     }
-    @POST
+    /*@POST
     @Path("update")
     public String userUpdate(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("username") String username, @FormDataParam("email") String email, @FormDataParam("password") String password) {
         System.out.println("User.userUpdate() has been Invoked.");
@@ -172,6 +181,8 @@ public class User {
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UPD)\"}";
         }
     }
+    */
+
     @GET
     @Path("delete")
     public String userDelete(@CookieParam("sessionToken") Cookie sessionToken) {

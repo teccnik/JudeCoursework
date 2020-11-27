@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New User</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+
+    <script>
+        function formValidate() {
+            console.log("formValidate() Invoked.");
+            let valid=true;
+            document.getElementById("usernameValidationText").innerHTML ="";
+            document.getElementById("emailValidationText").innerHTML="";
+            document.getElementById("passwordValidationText").innerHTML="";
+
+            if (document.getElementById("username").value=="") {
+                document.getElementById("usernameValidationText").innerHTML = "Please enter a username.";
+                valid = false;
+            }
+            if (!document.getElementById("email").checkValidity()) {
+                valid= false;
+                document.getElementById('email').value='';
+                document.getElementById("emailValidationText").innerHTML = "Please enter a valid email.";
+            }
+            if (!document.getElementById("password").checkValidity()) {
+                valid = false;
+                document.getElementById("passwordValidationText").innerHTML = "Please enter a password between 8 and 12 characters.";
+            }
+            if (valid===true) {
+                postUserAdd();
+            }
+        }
+        function postUserAdd() {
+            console.log("postUserAdd() Invoked.");
+            var formData = new FormData(document.getElementById('newUserForm'));
+            var url = "user/new";
+
+            fetch(url, {
+                method: "POST", body: formData,
+            }).then(response=> {
+                return response.json();
+            }).then(response=> {
+                if (response.hasOwnProperty("Error")) {
+                    alert("An error occurred.");
+                } else {
+                    alert("New account created! You may now log in.");
+                    window.open("login.html","_self");
+                }
+            });
+        }
+    </script>
+</head>
+<body class="center">
+
+<img src="img/WYLT%20logo.png" alt="WYLT Logo" class="logo">
+
+<ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="forumHome.html">Forum</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="uploadTrack.html">Upload Track</a></li>
+    <li><a href="user.html">User</a></li>
+</ul>
+<br>
+Register:
+
+<form id="newUserForm">
+    <input type="text" class="form-control" id="username" name="username" placeholder="Username (*)">
+    <div id="usernameValidationText"></div>
+
+    <input type="email" pattern="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$" required class="form-control" id="email" name="email" placeholder="Enter email.">
+    <div id="emailValidationText"></div>
+
+    <input type="password" pattern=".{8,12}" required class="form-control" id="password" name="password" placeholder="Password (*)">
+    <div id="passwordValidationText"></div>
+</form>
+
+<div id="message"></div>
+<div align="center">
+    <button id="messageSubmit" onclick="formValidate();" class="button">REGISTER NEW USER</button>
+</div>
+
+</body>
+</html>
