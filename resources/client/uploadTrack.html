@@ -5,7 +5,7 @@
     <title>Title</title>
     <link rel="stylesheet" href="css/styles.css">
     <script>
-        function uploadFIle() {
+        function uploadFile() {
             console.log("Invoked uploadFile()");
             var fileInput = document.getElementById('the-file');
             var file = fileInput.files[0];
@@ -21,9 +21,7 @@
             }).then(response=> {
                 if (response.startsWith('Error')) {
                     alert(response);
-                } else {
-                    window.open("user.html","_self");
-                }
+                 }
             })
         }
     </script>
@@ -39,6 +37,15 @@
 </ul>
 <br>
 <img src="img/WYLT%20logo.png" alt="WYLT Logo" class="logo">
+
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <input id="the-file" name="file" type="file">
+</form>
+
+<button id="uploadFile" class="button" onclick='uploadFile();' >UPLOAD Audio</button>
+
+
 
 </body>
 </html>

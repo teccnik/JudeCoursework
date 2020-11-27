@@ -16,6 +16,14 @@ import java.io.IOException;
 @Path("client/")
 public class Client {
 
+
+    @GET
+    @Path("audio/{path}")
+    @Produces("audio/mpeg")
+    public byte[] getAudioFile(@PathParam("path") String path) {
+        return getFile("client/audio/" + path);
+    }
+
     @GET
     @Path("img/{path}")
     @Produces({"image/jpeg,image/png"})
