@@ -5,24 +5,26 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="css/styles.css">
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.js"></script>
     <script>
         "use strict";
 
         function pUserLogin() {
             console.log("pUserLogin() Invoked. ");
             var formData = new FormData(document.getElementById('loginForm'));
-            var url = "user/login";
+            var url = "/user/login";
 
             fetch(url, {
-                method: "POST", body: formData,
+                method: "POST",
+                body: formData,
             }).then(response => {
                 return response.json();
             }).then(response => {
                 if (response.hasOwnProperty("Error")) {
-                    alert("Username & Password unrecognised.");
+                    alert(JSON.stringify(response));
                 } else {
                     Cookies.set("sessionToken",response.sessionToken);
+                    Cookies.set("username",response.username);
                     window.open("index.html","_self");
                 }
             });
@@ -49,7 +51,7 @@
 
 </head>
 <body class="center">
-<img src="img/WYLT%20logo.png" alt="WYLT logo" class="logo">
+
 <ul>
     <li><a href="index.html">Home</a></li>
     <li><a href="forumHome.html">Forum</a></li>
@@ -57,15 +59,18 @@
     <li><a href="uploadTrack.html">Upload Track</a></li>
     <li><a href="user.html">User</a></li>
 </ul>
-<br><br>
+<br>
+<img src="img/WYLT%20logo.png" alt="WYLT logo" class="logo">
+<br>
+
 <form id="loginForm">
-    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+    <input type="text" id="username" name="username" placeholder="Username">
     <div id="usernameValidationText"></div>
 
-    <input type="password" id="password" name="password" class="form-control" placeholder="Password" pattern=".{8,16}" required>
+    <input type="password" id="password" name="password" placeholder="Password" pattern=".{8,16}" required>
     <div id="passwordValidationText"></div>
 </form>
-<button class="button" onclick="formValidate();">LOGIN</button>
+<button class="button" onclick="pUserLogin();">LOGIN</button>
 <br>
 
 <button class="button" onclick=window.open("newUser.html","_self")>NEW USER</button>

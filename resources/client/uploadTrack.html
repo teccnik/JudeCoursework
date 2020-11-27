@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script>
+        function uploadFIle() {
+            console.log("Invoked uploadFile()");
+            var fileInput = document.getElementById('the-file');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file',file);
+
+            const url = "/song/new";
+            fetch (url, {
+                method: "POST",
+                body: formData,
+            }).then(response=> {
+                return response.text();
+            }).then(response=> {
+                if (response.startsWith('Error')) {
+                    alert(response);
+                } else {
+                    window.open("user.html","_self");
+                }
+            })
+        }
+    </script>
 
 </head>
 <body>
@@ -14,6 +37,8 @@
     <li><a href="uploadTrack.html">Upload Track</a></li>
     <li><a href="user.html">User</a></li>
 </ul>
+<br>
+<img src="img/WYLT%20logo.png" alt="WYLT Logo" class="logo">
 
 </body>
 </html>

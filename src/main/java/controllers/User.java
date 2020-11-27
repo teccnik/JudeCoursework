@@ -27,7 +27,7 @@ public class User {
     @POST
     @Path("login")
     public String userLogin(@FormDataParam("username") String username, @FormDataParam("password") String password) {
-        System.out.println("User.userLogin() invoked with username " + username + " and password " + password);
+        System.out.println("User.login() invoked with username " + username + " and password " + password);
 
         try {
             PreparedStatement ps1 = Main.db.prepareStatement("SELECT password FROM Users WHERE username = ?");
@@ -106,17 +106,17 @@ public class User {
 
     @POST
     @Path("new")
-    public String userNew(@FormDataParam("username") String username, @FormDataParam("email") String email, @FormDataParam("password") String password, @FormDataParam("Admin") String Admin) {
+    public String userNew(@FormDataParam("username") String username, @FormDataParam("email") String email, @FormDataParam("password") String password) {
         System.out.println("User.userNew() Invoked");
 
         try {
             PreparedStatement statement = Main.db.prepareStatement(
-                    "INSERT INTO Users (username, email, password, Admin) VALUES (?,?,?,?)");
+                    "INSERT INTO Users (username, email, password) VALUES (?,?,?)");
 
             statement.setString(1, username);
             statement.setString(2, email);
             statement.setString(3, password);
-            statement.setString(4, Admin);
+            statement.executeUpdate();
             return "{\"SUCCESS\": \"New User added successfully. \"}";
 
         } catch (Exception e) {
