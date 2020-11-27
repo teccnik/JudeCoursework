@@ -23,7 +23,7 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 
 public class Song {
-    /*@POST
+    @POST
     @Path("new")
     public String uploadSong(@CookieParam("sessionToken") Cookie sessionToken,@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) throws Exception {
         System.out.println("Invoked song.uploadSong()");
@@ -72,5 +72,5 @@ public class Song {
             System.out.println("Database error" + exception.getMessage());
             return false;
         }
-    }*/
+    }
 }
