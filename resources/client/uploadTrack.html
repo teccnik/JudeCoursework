@@ -8,6 +8,7 @@
         function uploadFile() {
             console.log("Invoked uploadFile()");
             var fileInput = document.getElementById('the-file');
+            var songName = document.getElementById('song-name');
             var file = fileInput.files[0];
             var formData = new FormData();
             formData.append('file',file);
@@ -15,7 +16,7 @@
             const url = "/song/new";
             fetch (url, {
                 method: "POST",
-                body: formData,
+                body: formData, songName,
             }).then(response=> {
                 return response.text();
             }).then(response=> {
@@ -28,18 +29,22 @@
 
 </head>
 <body>
-<ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="forumHome.html">Forum</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="uploadTrack.html">Upload Track</a></li>
-    <li><a href="user.html">User</a></li>
-</ul>
+<div class="topnav">
+    <a href="index.html">Home</a>
+    <a href="forumHome.html">Forum</a>
+    <a href="login.html">Login</a>
+    <a class="active" href="uploadTrack.html">Upload Track</a>
+    <a href="user.html">User</a>
+    <input type="text" placeholder="Search...">
+</div>
 <br>
 <img src="img/WYLT%20logo.png" alt="WYLT Logo" class="logo">
-
+<br>
+<br>
+<br>
 
 <form id="uploadForm" enctype="multipart/form-data">
+    <input id="song-name" name="name" type="text">
     <input id="the-file" name="file" type="file">
 </form>
 

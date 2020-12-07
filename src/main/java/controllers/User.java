@@ -92,15 +92,21 @@ public class User {
         }
     }
 
-    public static boolean validateSessionToken(String sessionToken) {
+    public static int validateSessionToken(Cookie sessionToken) {
+        String token = sessionToken.getValue();
+        System.out.println("Invoked User.validateSessionCookie(), cookie value " + token);
+
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT userID FROM Users WHERE sessionToken =?");
-            ps.setString(1,sessionToken);
-            ResultSet logoutResults = ps.executeQuery();
-            return logoutResults.next();
-        } catch (Exception exception) {
-            System.out.println("Database error" + exception.getMessage());
-            return false;
+            PreparedStatement statement = Main.db.prepareStatement(
+                    "SELECT userID FROM Users WHERE sessionToken =?"
+            );
+            statement.setString(1,token);
+            ResultSet resultSet = statement.executeQuery();
+            System.out.println("userID is "+resultSet.getInt("UserID"));
+            return resultSet.getInt("UserID");
+        } catch (Exception e) {
+            System.out.println("Database error" + e.getMessage());
+            return -1; // rogue value for errors
         }
     }
 
@@ -161,19 +167,18 @@ public class User {
             return "{\"Error\": \"Something went wrong! Please contact an admin. (U-UGT)\"}";
         }
     }
-    /*@POST
+    @POST
     @Path("update")
-    public String userUpdate(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("username") String username, @FormDataParam("email") String email, @FormDataParam("password") String password) {
+    public String userUpdate(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("username") String username, @FormDataParam("password") String password) {
         System.out.println("User.userUpdate() has been Invoked.");
         if (sessionToken==null) {
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UPD)\"}";
         }
         try {
-            int userID = User.validateSessionToken(sessionToken);
+            int userID = validateSessionToken(sessionToken);
             PreparedStatement statement = Main.db.prepareStatement("UPDATE Users SET username = ?, email = ?, password = ?");
             statement.setString(1, username);
-            statement.setString(2, email);
-            statement.setString(3, password);
+            statement.setString(2, password);
             statement.executeUpdate();
             return "Success";
         } catch (Exception e) {
@@ -181,8 +186,6 @@ public class User {
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UPD)\"}";
         }
     }
-    */
-
     @GET
     @Path("delete")
     public String userDelete(@CookieParam("sessionToken") Cookie sessionToken) {

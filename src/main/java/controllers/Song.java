@@ -23,13 +23,13 @@ public class Song {
     @POST
     @Path("new")
     public String uploadSong(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("file") InputStream uploadedInputStream,
-                             @FormDataParam("file") FormDataContentDisposition fileDetail) throws Exception {
+                             @FormDataParam("file") FormDataContentDisposition fileDetail, @FormDataParam("songName") String songName) throws Exception {
 
         System.out.println("Invoked song.uploadSong()");
 
         String fileName = fileDetail.getFileName();
         int dot = fileName.lastIndexOf('.');
-        String fileExtension = fileName.substring(dot + 1);
+        String fileExtension = fileName.substring(dot + 1); //Comments
         String newFileName = "client/audio/" + UUID.randomUUID() + "." + fileExtension;
 
         int userID = validateSessionCookie(sessionToken);
@@ -39,20 +39,21 @@ public class Song {
 
         try {
 
-            //THIS BIT FAILS BECAUSE OF NOT NULL CONYTRAINTS ON THE FIELD AND I"VE JUST TESTED UPLOADING THE FILE
-            PreparedStatement statement = Main.db.prepareStatement("UPDATE Songs SET songFile = ? WHERE userID = ?");
-            statement.setString(1, newFileName);
-            statement.setInt(2, userID);
+            //THIS BIT FAILS BECAUSE OF NOT NULL CONSTRAINTS ON THE FIELD AND I"VE JUST TESTED UPLOADING THE FILE
+            PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID, songName,songFile) VALUES(?,?,?)");
+            statement.setInt(1, userID);
+            statement.setString(2, songName);
+            statement.setString(3, newFileName);
             statement.executeUpdate();
-        } catch (Exception exception) {
-            System.out.println("Database error: " + exception.getMessage());
+        } catch (Exception e) {
+            System.out.println("Database error: " + e.getMessage());
             return "{\"Error\": \"Unable to list items.  Error code xx.\"}";
 
         }
 
 
-        String uploadedFileLocation = "C:\\Users\\Rachel\\IdeaProjects\\JudeLCourseworkv2\\resources\\" + newFileName;   // change as appropriate
-
+        String uploadedFileLocation = "MacintoshHD/Users/jude/Desktop/JudeCoursework/resources/" + newFileName;   // change as appropriate
+        System.out.println(uploadedFileLocation);
         try {
             int read = 0;
             byte[] bytes = new byte[1024];
@@ -88,6 +89,19 @@ public class Song {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return -1;  //rogue value indicating error
+
+        }
+    }
+    public String getSong(@FormDataParam("searchValue") String searchValue) {
+        System.out.println("Song.getSong() Invoked.");
+        try {
+            PreparedStatement statement = Main.db.prepareStatement("SELECT songID, userID, songName, songLength, file FROM Songs WHERE songName LIKE ?");
+            statement.setString(1,'%' + searchValue.toLowerCase()+'%');
+            ResultSet resultSet = statement.executeQuery();
+            return "User successfully searched for " + searchValue;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact admins with code S-GS. \"}";
 
         }
     }
