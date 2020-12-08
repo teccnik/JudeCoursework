@@ -38,11 +38,9 @@ public class Song {
         }
 
         try {
-
-            //THIS BIT FAILS BECAUSE OF NOT NULL CONSTRAINTS ON THE FIELD AND I"VE JUST TESTED UPLOADING THE FILE
             PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID,songName,songFile) VALUES(?,?,?)");
             statement.setInt(1, userID);
-            statement.setString(2, songName);
+            statement.setString(2, fileName.substring(0, dot));  //set song name to name of file less the extension
             statement.setString(3, newFileName);
             statement.executeUpdate();
         } catch (Exception e) {
@@ -50,9 +48,7 @@ public class Song {
             return "{\"Error\": \"Unable to list items.  Error code xx.\"}";
 
         }
-
-
-        String uploadedFileLocation = "Macintosh HD/Users/jude/Desktop/JudeCoursework/resources/" + newFileName;   // change as appropriate
+        String uploadedFileLocation = "C:\\Users\\Rachel\\IdeaProjects\\JudeLCourseworkv2\\resources\\" + newFileName;   // change as appropriate change as appropriate
         System.out.println(uploadedFileLocation);
         try {
             int read = 0;
