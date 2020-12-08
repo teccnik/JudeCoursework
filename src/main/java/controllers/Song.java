@@ -40,7 +40,7 @@ public class Song {
         try {
 
             //THIS BIT FAILS BECAUSE OF NOT NULL CONSTRAINTS ON THE FIELD AND I"VE JUST TESTED UPLOADING THE FILE
-            PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID, songName,songFile) VALUES(?,?,?)");
+            PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID,songName,songFile) VALUES(?,?,?)");
             statement.setInt(1, userID);
             statement.setString(2, songName);
             statement.setString(3, newFileName);
@@ -52,7 +52,7 @@ public class Song {
         }
 
 
-        String uploadedFileLocation = "MacintoshHD/Users/jude/Desktop/JudeCoursework/resources/" + newFileName;   // change as appropriate
+        String uploadedFileLocation = "Macintosh HD/Users/jude/Desktop/JudeCoursework/resources/" + newFileName;   // change as appropriate
         System.out.println(uploadedFileLocation);
         try {
             int read = 0;
