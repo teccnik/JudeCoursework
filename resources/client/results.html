@@ -3,7 +3,7 @@
 <head>
     <link rel="stylesheet" href="css/styles.css">
 
-    </link>
+
     <meta charset="UTF-8">
     <title>Title</title>
     <script>
@@ -46,10 +46,11 @@
 
         function pageLoad() {
             console.log("Invoked pageLoad()");
+            getSearch();
         }
     </script>
 </head>
-<body onload="pageLoad(),getSearch()">
+<body onload="pageLoad()">
 <div class="resultspage">
     <div class="topnav">
         <a class="active" href="index.html">Home</a>
@@ -62,11 +63,11 @@
 
     </div>
     <form id="navbar">
-        <input type="text" id="search-string" placeholder="Search...">
+        <label for="search-string"></label><input type="text" id="search-string" placeholder="Search...">
         <div id="search-validationtext"></div>
 
     </form>
-    <button class="button" id="search-submit" onclick=window.open("results.html","_self") placeholder="Search"></button>
+    <button class="button" id="search-submit" onclick=window.open("results.html","_self")>Search</button>
     <div class="results">
         <h1 class="results-header">Track Results: </h1>
         <table id="songTable"></table>

@@ -13,8 +13,8 @@
             document.getElementById("usernameValidationText").innerHTML ="";
             document.getElementById("emailValidationText").innerHTML="";
             document.getElementById("passwordValidationText").innerHTML="";
-
-            if (document.getElementById("username").value="") {
+            var userVal = document.getElementById("username").value;
+            if (userVal==="") {
                 document.getElementById("usernameValidationText").innerHTML = "Please enter a username.";
                 valid = false;
             }

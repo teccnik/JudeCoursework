@@ -33,8 +33,9 @@
             let valid=true;
 
             document.getElementById("usernameValidationText").innerHTML = "";
-            document.getElementById("passwordValidationText").innerHtml = ""; //validation messages disappear if re-validated
-            if (document.getElementById("username").value=""){
+            document.getElementById("passwordValidationText").innerHTML = ""; //validation messages disappear if re-validated
+            var userVal = document.getElementById("username").value;
+            if (userVal===""){
                 document.getElementById("usernameValidationText").innerHTML = "Please enter your username.";
                 valid = false;
             }
