@@ -4,22 +4,108 @@
     <link rel="stylesheet" href="css/styles.css">
     <meta charset="UTF-8">
     <title>WaterYLT</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.js"></script>
+    <script>
+        function pageLoad() {
+            console.log("Invoked pageLoad()");
+            /*var url="/user/validateSessionToken";
+
+            fetch(url, {
+                method: "GET",
+            }).then(response => {
+                return response.json();
+            }).then(response => {
+                if(response==-1) {
+                    console.log("Not Logged In.");
+                    document.getElementById("user-nav").innerHTML="";
+                } else {
+                    console.log("Logged in.");
+                    document.getElementById("login-nav").innerHTML="";
+                }
+            });*/
+        }
+        function searchSubmit() {
+            var searchStr = document.getElementById('search-String');
+            getSearch(searchStr);
+        }
+        function getSearch() {
+            console.log("getSearch() Invoked.");
+            var searchString = document.getElementById('search-String').value;
+
+            const url = "/song/getSong/";
+            fetch(url + searchString, {
+                method: "GET",
+            }).then(response => {
+                return response.json();
+            }).then(response => {
+                if(response.hasOwnProperty("Error")) {
+                    alert(JSON.stringify(response));
+                } else {
+                    formatSongList(response);
+                }
+            });
+        }
+        function formatSongList(data) {
+            console.log("Invoked formatSongList() ");
+            console.log(data);
+
+            let dataHTML = "<tr><td>Song Name</td><td>Artist</td><td>Play</td></tr>";
+            for (let item of data) {
+                dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.userID + "</td><td><audio controls class='playSong'><source src=item.songFile></audio> </td></tr>";
+            }
+            document.getElementById("songTable").innerHTML = dataHTML;
+
+            document.addEventListener("click",function (event) {
+                if(event.target.matches('.playSong')) {
+                    var songID = event.target.getAttribute("data-songID");
+                    document.getElementById("songID").value = songID;
+                }
+            });
+        }
+    </script>
 </head>
-<body>
+<body onload="pageLoad()">
     <div class="topnav">
         <a class="active" href="index.html">Home</a>
         <a href="forumHome.html">Forum</a>
-        <a href="login.html">Login</a>
+        <a id="login-nav" href="login.html">Login</a>
         <a href="uploadTrack.html">Upload Track</a>
-        <a href="user.html">User</a>
-        <input type="text" placeholder="Search...">
+        <a id="user-nav" href="user.html">User</a>
+
+
+
     </div>
+    <form id="navbar">
+        <input type="text" id="search-String" placeholder="Search...">
+        <div id="search-validationtext"></div>
+
+    </form>
+    <button class="button" id="search-submit" onclick="getSearch()" >Search</button>
 
 
 
     <br>
     <br>
     <img src="img/WYLT%20logo.png" alt="Site Logo" class="logo">
+
+    <div class="homepage">
+        <div class="trending">
+            <ol>
+                <li></li>
+                <li></li>
+            </ol>
+        </div>
+        <div class="featured">
+
+        </div>
+    </div>
+
+    <div class="results">
+        <h1 class="results-header">Track Results: </h1>
+        <table id="songTable">
+
+        </table>
+    </div>
 
 </body>
 </html>

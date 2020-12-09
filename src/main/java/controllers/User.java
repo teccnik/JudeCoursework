@@ -51,8 +51,8 @@ public class User {
             } else {
                 return "{\"Error\": \"Username & Password are incorrect. \"}";
             }
-        } catch (Exception exception) {
-            System.out.println("Database error during /user/login: " + exception.getMessage());
+        } catch (Exception e) {
+            System.out.println("Database error during /user/login: " + e.getMessage());
             return "{\"Error\": \"Server side error.\"}";
         }
 
@@ -91,8 +91,9 @@ public class User {
             return "Error";
         }
     }
-
-    public static int validateSessionToken(Cookie sessionToken) {
+    @GET
+    @Path("validateSessionToken")
+    public static int validateSessionToken(@CookieParam("sessionToken") Cookie sessionToken) {
         String token = sessionToken.getValue();
         System.out.println("Invoked User.validateSessionCookie(), cookie value " + token);
 

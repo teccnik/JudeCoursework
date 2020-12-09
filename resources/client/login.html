@@ -24,7 +24,6 @@
                     alert(JSON.stringify(response));
                 } else {
                     Cookies.set("sessionToken",response.sessionToken);
-                    Cookies.set("username",response.username);
                     window.open("index.html","_self");
                 }
             });
@@ -35,7 +34,7 @@
 
             document.getElementById("usernameValidationText").innerHTML = "";
             document.getElementById("passwordValidationText").innerHtml = ""; //validation messages disappear if re-validated
-            if (document.getElementById("username").value==""){
+            if (document.getElementById("username").value=""){
                 document.getElementById("usernameValidationText").innerHTML = "Please enter your username.";
                 valid = false;
             }
@@ -57,7 +56,8 @@
     <a class="active" href="login.html">Login</a>
     <a href="uploadTrack.html">Upload Track</a>
     <a href="user.html">User</a>
-    <input type="text" placeholder="Search...">
+    <label for="search"></label>
+        <input id="search" type="text" placeholder="Search...">
 </div>
 
 <br>
@@ -66,13 +66,13 @@
 <br>
 <br>
 <form id="loginForm">
-    <input type="text" id="username" name="username" placeholder="Username">
+    <label for="username"></label><input type="text" id="username" name="username" placeholder="Username">
     <div id="usernameValidationText"></div>
 
-    <input type="password" id="password" name="password" placeholder="Password" pattern=".{8,16}" required>
+    <label for="password"></label><input type="password" id="password" name="password" placeholder="Password" pattern=".{8,16}" required>
     <div id="passwordValidationText"></div>
 </form>
-<button class="button" onclick="pUserLogin();">LOGIN</button>
+<button class="button" onclick="formValidate();">LOGIN</button>
 <br>
 
 <button class="button" onclick=window.open("newUser.html","_self")>NEW USER</button>

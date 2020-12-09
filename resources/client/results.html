@@ -1,10 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="css/styles.css">
+
+    </link>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script>
+        function getSearch() {
+            console.log("getSearch() Invoked.");
+
+
+            const url = "/song/getSong/" + searchString;
+            fetch(url, {
+                method: "GET",
+            }).then(response => {
+                return response.json();
+            }).then(response => {
+                if(response.hasOwnProperty("Error")) {
+                    alert(JSON.stringify(response));
+                } else {
+                    formatSongList(response);
+                }
+            });
+        }
+
+
+        function formatSongList(data) {
+            console.log("Invoked formatSongList() ");
+            console.log(data);
+
+            let dataHTML = "<tr><td>Song Name</td><td>Artist</td><td>Play</td></tr>tr>";
+            for (let item of data) {
+                dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.userID + "</td><td><button class='playSong' data-SongID'" + item.SongID + "'>Play</button> </td></tr>";
+            }
+            document.getElementById("songTable").innerHTML = dataHTML;
+
+            document.addEventListener("click",function (event) {
+                if(event.target.matches('.playSong')) {
+                    var songID = event.target.getAttribute("data-songID");
+                    document.getElementById("songID").value = songID;
+                }
+            });
+        }
+
+        function pageLoad() {
+            console.log("Invoked pageLoad()");
+        }
+    </script>
 </head>
-<body>
+<body onload="pageLoad(),getSearch()">
+<div class="resultspage">
+    <div class="topnav">
+        <a class="active" href="index.html">Home</a>
+        <a href="forumHome.html">Forum</a>
+        <a id="login-nav" href="login.html">Login</a>
+        <a href="uploadTrack.html">Upload Track</a>
+        <a id="user-nav" href="user.html">User</a>
+
+
+
+    </div>
+    <form id="navbar">
+        <input type="text" id="search-string" placeholder="Search...">
+        <div id="search-validationtext"></div>
+
+    </form>
+    <button class="button" id="search-submit" onclick=window.open("results.html","_self") placeholder="Search"></button>
+    <div class="results">
+        <h1 class="results-header">Track Results: </h1>
+        <table id="songTable"></table>
+    </div>
+
+
+
+    <br>
+    <br>
+    <img src="img/WYLT%20logo.png" alt="Site Logo" class="logo">
+
+</div>
 
 </body>
 </html>

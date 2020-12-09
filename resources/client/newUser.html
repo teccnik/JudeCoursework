@@ -14,7 +14,7 @@
             document.getElementById("emailValidationText").innerHTML="";
             document.getElementById("passwordValidationText").innerHTML="";
 
-            if (document.getElementById("username").value=="") {
+            if (document.getElementById("username").value="") {
                 document.getElementById("usernameValidationText").innerHTML = "Please enter a username.";
                 valid = false;
             }
@@ -61,7 +61,7 @@
     <a href="login.html">Login</a>
     <a href="uploadTrack.html">Upload Track</a>
     <a class="active" href="user.html">User</a>
-    <input type="text" placeholder="Search...">
+    <label for="search"></label><input id="search" type="text" placeholder="Search...">
 </div>
 <br>
 <img src="img/WYLT%20logo.png" alt="WYLT Logo" class="logo">
@@ -70,19 +70,19 @@
 Register:
 
 <form id="newUserForm">
-    <input type="text" class="form-control" id="username" name="username" placeholder="Username (*)">
+    <label for="username"></label><input type="text" class="form-control" id="username" name="username" placeholder="Username (*)">
     <div id="usernameValidationText"></div>
 
-    <input type="email" pattern="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$" required class="form-control" id="email" name="email" placeholder="Enter email.">
+    <label for="email"></label><input type="email" pattern="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$" required class="form-control" id="email" name="email" placeholder="Enter email.">
     <div id="emailValidationText"></div>
 
-    <input type="password" pattern=".{8,12}" required class="form-control" id="password" name="password" placeholder="Password (*)">
+    <label for="password"></label><input type="password" pattern=".{8,12}" required class="form-control" id="password" name="password" placeholder="Password (*)">
     <div id="passwordValidationText"></div>
 </form>
 
 <div id="message"></div>
 <div align="center">
-    <button id="messageSubmit" onclick="postUserAdd();" class="button">REGISTER NEW USER</button>
+    <button id="messageSubmit" onclick="formValidate();" class="button">REGISTER NEW USER</button>
 </div>
 
 </body>
