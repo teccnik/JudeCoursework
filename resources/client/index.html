@@ -29,11 +29,12 @@
             fetch("/user/name", {
                 method: "GET",
             }).then(response => {
-                return response;
+                return response.json();
             }).then(response => {
                 if (response.hasOwnProperty("Error")) {
                     console.log("Failed to get username.");
                     document.getElementById('user-display').style.display = "none";
+                    document.getElementById('login-nav').style.display="";
                 } else {
                     console.log(response);
                     console.log("Username received as " + response.username);

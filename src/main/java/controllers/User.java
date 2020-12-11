@@ -143,7 +143,9 @@ public class User {
             PreparedStatement statement = Main.db.prepareStatement("SELECT username FROM Users WHERE sessionToken = ?");
             statement.setString(1,sessionToken);
             ResultSet resultSet = statement.executeQuery();
-            return resultSet.getString("username");
+            JSONObject response = convertToJSONObject(statement.executeQuery());
+            System.out.println(response);
+            return response.toString();
         } catch (Exception e) {
             return "{\"Error\": \"Something went wrong. Please contact an admin.\"}";
         }
