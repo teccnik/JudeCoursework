@@ -91,17 +91,16 @@ public class User {
             return "Error";
         }
     }
-    @GET
+    @POST
     @Path("validateSessionToken")
-    public static int validateSessionToken(@CookieParam("sessionToken") Cookie sessionToken) {
-        String token = sessionToken.getValue();
-        System.out.println("Invoked User.validateSessionCookie(), cookie value " + token);
+    public static int validateSessionToken(@CookieParam("sessionToken") String sessionToken) {
+        System.out.println("Invoked User.validateSessionCookie(), cookie value " + sessionToken);
 
         try {
             PreparedStatement statement = Main.db.prepareStatement(
                     "SELECT userID FROM Users WHERE sessionToken =?"
             );
-            statement.setString(1,token);
+            statement.setString(1,sessionToken);
             ResultSet resultSet = statement.executeQuery();
             System.out.println("userID is "+resultSet.getInt("UserID"));
             return resultSet.getInt("UserID");
@@ -134,15 +133,15 @@ public class User {
     }
     @GET
     @Path("name")
-    public String userName(@CookieParam("sessionToken") Cookie sessionToken) {
+    public String userName(@CookieParam("sessionToken") String sessionToken) {
         System.out.println("User.userName() Invoked");
         if (sessionToken==null) {
             return "{\"Error\": \"Something went wrong. Please contact an admin. \"}";
         }
         try {
-            String uuid = sessionToken.getValue();
+            //String uuid = sessionToken.getValue();
             PreparedStatement statement = Main.db.prepareStatement("SELECT username FROM Users WHERE sessionToken = ?");
-            statement.setString(1,uuid);
+            statement.setString(1,sessionToken);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.getString("username");
         } catch (Exception e) {
@@ -151,15 +150,15 @@ public class User {
     }
     @GET
     @Path("get")
-    public String userGet(@CookieParam("sessionToken") Cookie sessionToken) {
+    public String userGet(@CookieParam("sessionToken") String sessionToken) {
         System.out.println("User.userGet() has been Invoked.");
         if (sessionToken==null) {
             return "{\"Error\": \"Something went wrong. Please contact an admin. (U-UGT)\"}";
         }
         try {
-            String uuid = sessionToken.getValue();
+            //String uuid = sessionToken.getValue();
             PreparedStatement statement = Main.db.prepareStatement("SELECT * FROM Users WHERE sessionToken = ?");
-            statement.setString(1, uuid);
+            statement.setString(1, sessionToken);
             ResultSet resultSet = statement.executeQuery();
             JSONObject resultsJSON = convertToJSONObject(resultSet);
             return resultsJSON.toString();
@@ -170,7 +169,7 @@ public class User {
     }
     @POST
     @Path("update")
-    public String userUpdate(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("username") String username, @FormDataParam("password") String password) {
+    public String userUpdate(@CookieParam("sessionToken") String sessionToken, @FormDataParam("username") String username, @FormDataParam("password") String password) {
         System.out.println("User.userUpdate() has been Invoked.");
         if (sessionToken==null) {
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UPD)\"}";
@@ -189,11 +188,11 @@ public class User {
     }
     @GET
     @Path("delete")
-    public String userDelete(@CookieParam("sessionToken") Cookie sessionToken) {
+    public String userDelete(@CookieParam("sessionToken") String sessionToken) {
         System.out.println("User.userDelete() Invoked.");
         try {
             PreparedStatement statement = Main.db.prepareStatement("DELETE FROM Users WHERE sessionToken = ?");
-            statement.setString(1,sessionToken.getValue());
+            statement.setString(1,sessionToken);
             statement.executeUpdate();
             return "{\"Success\": \"User Deleted.\"}";
         } catch (Exception e) {

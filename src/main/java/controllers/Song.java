@@ -47,10 +47,12 @@ public class Song {
 
         try {
             PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID,songName,songFile) VALUES(?,?,?)");
+            PreparedStatement statement2 = Main.db.prepareStatement("INSERT INTO Analytics(likes,comments,saves) VALUES(0,0,0)");
             statement.setInt(1, userID);
             statement.setString(2, fileName.substring(0, dot));  //set song name to name of file less the extension
             statement.setString(3, savedFileName);
             statement.executeUpdate();
+            statement2.executeUpdate();
         } catch (Exception e) {
             System.out.println("Database error: " + e.getMessage());
             return "{\"Error\": \"Unable to list items.  Error code xx.\"}";
@@ -145,6 +147,25 @@ public class Song {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "{\"Error\": \"Something went wrong. Please contact admins with code S-GS. \"}";
+        }
+    }
+    @GET
+    @Path("getTrending")
+    public String getTrending() {
+        System.out.println("Song.getTrending() Invoked.");
+        try {
+            PreparedStatement statement = Main.db.prepareStatement("SELECT TOP 10 * FROM Analytics ORDER BY likes DESC");
+            ResultSet resultSet = statement.executeQuery();
+            JSONArray response = convertToJSONArray(resultSet);
+            System.out.println(response);
+
+            JSONObject trendingList = new JSONObject();
+            trendingList.put("songs",response);
+
+            return response.toString();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact admins with code S-GT. \"}";
         }
     }
 

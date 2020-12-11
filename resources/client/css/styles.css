@@ -91,3 +91,8 @@ ul {
     color: cadetblue;
     font-size: 24px;
 }
+.user-display {
+    float: right;
+    padding: 14px;
+    font-size: 18px;
+}

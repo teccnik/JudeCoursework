@@ -8,21 +8,38 @@
     <script>
         function pageLoad() {
             console.log("Invoked pageLoad()");
-            /*var url="/user/validateSessionToken";
+            var url="/user/validateSessionToken";
 
-            fetch(url, {
-                method: "GET",
+            fetch("/user/validateSessionToken", {
+                method: "POST",
             }).then(response => {
-                return response.json();
+                return response;
             }).then(response => {
                 if(response==-1) {
                     console.log("Not Logged In.");
-                    document.getElementById("user-nav").innerHTML="";
+                    document.getElementById("user-nav").style.display ="none";
                 } else {
                     console.log("Logged in.");
-                    document.getElementById("login-nav").innerHTML="";
+                    document.getElementById("login-nav").style.display="none";
+                    displayUser();
                 }
-            });*/
+            });
+        }
+        function displayUser() {
+            fetch("/user/name", {
+                method: "GET",
+            }).then(response => {
+                return response;
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Failed to get username.");
+                    document.getElementById('user-display').style.display = "none";
+                } else {
+                    console.log(response);
+                    console.log("Username received as " + response.username);
+                    document.getElementById('user-display').innerHTML = response.username;
+                }
+            });
         }
         function searchSubmit() {
             var searchStr = document.getElementById('search-String');
@@ -76,6 +93,7 @@
                 }
             },true);
         }
+
         document.addEventListener("DOMContentLoaded", function() {
             onlyPlayOneSong(document.body);
         });
@@ -88,9 +106,7 @@
         <a id="login-nav" href="login.html">Login</a>
         <a href="uploadTrack.html">Upload Track</a>
         <a id="user-nav" href="user.html">User</a>
-
-
-
+        <div id="user-display" class="user-display"></div>
     </div>
     <form id="navbar">
         <label for="search-String"></label><input type="text" id="search-String" placeholder="Search...">
