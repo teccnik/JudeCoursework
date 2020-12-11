@@ -74,3 +74,20 @@ ul {
     margin-left: 20px;
     color: white;
 }
+.search-button {
+    float: right;
+}
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: slategrey;
+    color: antiquewhite;
+    text-align: center;
+}
+.terms {
+    background-color: antiquewhite;
+    color: cadetblue;
+    font-size: 24px;
+}

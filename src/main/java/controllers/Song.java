@@ -1,9 +1,12 @@
 package controllers;
 
 import server.Main;
+import static server.Converter.convertToJSONArray;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 
 
 import javax.ws.rs.*;
@@ -13,7 +16,10 @@ import javax.ws.rs.core.Cookie;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLOutput;
 import java.util.UUID;
+
+
 
 @Path("song/")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -30,7 +36,9 @@ public class Song {
         String fileName = fileDetail.getFileName();
         int dot = fileName.lastIndexOf('.');
         String fileExtension = fileName.substring(dot + 1); //Comments
-        String newFileName = "client/audio/" + UUID.randomUUID() + "." + fileExtension;
+        UUID fileUUID = UUID.randomUUID();
+        String newFileName = "client/audio/" + fileUUID + "." + fileExtension;
+        String savedFileName = "audio/"+fileUUID+"."+fileExtension;
 
         int userID = validateSessionCookie(sessionToken);
         if (userID == -1) {
@@ -41,7 +49,7 @@ public class Song {
             PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID,songName,songFile) VALUES(?,?,?)");
             statement.setInt(1, userID);
             statement.setString(2, fileName.substring(0, dot));  //set song name to name of file less the extension
-            statement.setString(3, newFileName);
+            statement.setString(3, savedFileName);
             statement.executeUpdate();
         } catch (Exception e) {
             System.out.println("Database error: " + e.getMessage());
@@ -88,17 +96,55 @@ public class Song {
 
         }
     }
-    public String getSong(@FormDataParam("searchValue") String searchValue) {
+
+
+    @GET
+    @Path("getSong")
+    public String getSong() {
         System.out.println("Song.getSong() Invoked.");
         try {
-            PreparedStatement statement = Main.db.prepareStatement("SELECT songID, userID, songName, songLength, file FROM Songs WHERE songName LIKE ?");
-            statement.setString(1,'%' + searchValue.toLowerCase()+'%');
+            PreparedStatement statement = Main.db.prepareStatement("SELECT songID, userID, songName, songLength, songFile FROM Songs");
             ResultSet resultSet = statement.executeQuery();
-            return "User successfully searched for " + searchValue;
+            JSONArray response = convertToJSONArray(resultSet);
+            return response.toString();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact admin with code S-GS. \"}";
+        }
+    }
+    @GET
+    @Path("getSong/{searchString}")
+    public String getSong(@PathParam("searchString") String searchString) {
+        System.out.println("Song.getSong() Invoked with searchString = " +searchString);
+        try {
+            PreparedStatement statement = Main.db.prepareStatement("SELECT songID, userID, songName, songLength, songFile FROM Songs WHERE songName LIKE ?");
+            PreparedStatement statement2 = Main.db.prepareStatement("SELECT Users.username FROM Users WHERE userID = (SELECT Songs.userID FROM Songs WHERE songName LIKE ?)");
+
+            statement.setString(1,'%' + searchString.toLowerCase()+'%');
+            ResultSet resultSet = statement.executeQuery();
+            JSONArray response = convertToJSONArray(resultSet);
+            System.out.println(response);
+
+            statement2.setString(1,'%' + searchString.toLowerCase()+'%');
+            ResultSet resultSet2 = statement2.executeQuery();
+            JSONArray response2 = convertToJSONArray(resultSet2);
+            System.out.println(response2);
+
+            //statement2.setString(2,resultSet.userID);
+
+            JSONObject songDetails = new JSONObject();
+            songDetails.put("details",response);
+            songDetails.put("username",response2);
+
+            System.out.println(songDetails);
+            return response.toString();
+            //return songDetails.toString();
+
+            //statement2.setString(2, response.);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "{\"Error\": \"Something went wrong. Please contact admins with code S-GS. \"}";
-
         }
     }
 

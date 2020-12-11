@@ -51,7 +51,9 @@
 
             let dataHTML = "<tr><td>Song Name</td><td>Artist</td><td>Play</td></tr>";
             for (let item of data) {
-                dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.userID + "</td><td><audio controls class='playSong'><source src=item.songFile></audio> </td></tr>";
+                console.log(item);
+                let file = item.songFile;
+                dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.username + "</td><td><audio controls class='playSong' id='playSong' src=" +item.songFile+"></audio> </td></tr>";
             }
             document.getElementById("songTable").innerHTML = dataHTML;
 
@@ -61,7 +63,22 @@
                     document.getElementById("songID").value = songID;
                 }
             });
+            document.getElementById('playSong').volume=.5;
         }
+        function onlyPlayOneSong(container) {
+            container.addEventListener("play", function(event) {
+                audio_elements = container.getElementsByTagName("audio")
+                for(i=0;i<audio_elements.length;i++) {
+                    audio_element = audio_elements[i];
+                    if (audio_element !== event.target) {
+                        audio_element.pause();
+                    }
+                }
+            },true);
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            onlyPlayOneSong(document.body);
+        });
     </script>
 </head>
 <body onload="pageLoad()">
@@ -105,6 +122,9 @@
         <table id="songTable">
 
         </table>
+    </div>
+    <div class="footer">
+        <a href="tsandcs.html">Terms & Conditions</a>
     </div>
 
 </body>
