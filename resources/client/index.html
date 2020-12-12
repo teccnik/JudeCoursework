@@ -6,25 +6,8 @@
     <title>WaterYLT</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.js"></script>
     <script>
-        function pageLoad() {
-            console.log("Invoked pageLoad()");
-            var url="/user/validateSessionToken";
+        var songIDParse;
 
-            fetch("/user/validateSessionToken", {
-                method: "POST",
-            }).then(response => {
-                return response;
-            }).then(response => {
-                if(response==-1) {
-                    console.log("Not Logged In.");
-                    document.getElementById("user-nav").style.display ="none";
-                } else {
-                    console.log("Logged in.");
-                    document.getElementById("login-nav").style.display="none";
-                    displayUser();
-                }
-            });
-        }
         function displayUser() {
             fetch("/user/name", {
                 method: "GET",
@@ -39,6 +22,42 @@
                     console.log(response);
                     console.log("Username received as " + response.username);
                     document.getElementById('user-display').innerHTML = response.username;
+                }
+            });
+        }
+        function addPlay(songID) {
+            console.log("addPlay() Invoked.");
+            console.log(parseInt(songID));
+            fetch("/song/trackPlay", {
+                method: "POST",
+                body: parseInt(songID),
+            }).then(response => {
+                return response;
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Failed to add play.");
+                } else {
+                    console.log(response);
+                    console.log("Play added.")
+                }
+            });
+
+        }
+        function pageLoad() {
+            console.log("Invoked pageLoad()");
+
+            fetch("/user/validateSessionToken", {
+                method: "POST",
+            }).then(response => {
+                return response;
+            }).then(response => {
+                if(response==-1) {
+                    console.log("Not Logged In.");
+                    document.getElementById("user-nav").style.display ="none";
+                } else {
+                    console.log("Logged in.");
+                    document.getElementById("login-nav").style.display="none";
+                    displayUser();
                 }
             });
         }
@@ -63,6 +82,7 @@
                 }
             });
         }
+
         function formatSongList(data) {
             console.log("Invoked formatSongList() ");
             console.log(data);
@@ -72,6 +92,8 @@
                 console.log(item);
                 let file = item.songFile;
                 dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.username + "</td><td><audio controls class='playSong' id='playSong' src=" +item.songFile+"></audio> </td></tr>";
+                songIDParse = item.songID;
+                console.log(songIDParse);
             }
             document.getElementById("songTable").innerHTML = dataHTML;
 
@@ -79,12 +101,14 @@
                 if(event.target.matches('.playSong')) {
                     var songID = event.target.getAttribute("data-songID");
                     document.getElementById("songID").value = songID;
+
                 }
             });
             document.getElementById('playSong').volume=.5;
         }
         function onlyPlayOneSong(container) {
             container.addEventListener("play", function(event) {
+                addPlay(songIDParse);
                 audio_elements = container.getElementsByTagName("audio")
                 for(i=0;i<audio_elements.length;i++) {
                     audio_element = audio_elements[i];

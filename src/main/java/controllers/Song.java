@@ -168,5 +168,19 @@ public class Song {
             return "{\"Error\": \"Something went wrong. Please contact admins with code S-GT. \"}";
         }
     }
+    @POST
+    @Path("trackPlay")
+    public String trackPlay(@FormDataParam("songID") int songID) {
+        System.out.println("Songs.trackPlay() Invoked.");
+        try {
+            PreparedStatement statement = Main.db.prepareStatement("UPDATE Analytics SET plays = plays + 1 WHERE songID = ?");
+            statement.setInt(1, songID);
+            statement.executeUpdate();
+            return "Play updated";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact admins with code S-TP. \"}";
+        }
+    }
 
 }
