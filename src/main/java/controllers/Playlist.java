@@ -2,6 +2,7 @@ package controllers;
 
 import server.Main;
 import static server.Converter.convertToJSONArray;
+import static server.Converter.convertToJSONArray;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -27,7 +28,75 @@ import java.util.UUID;
 public class Playlist {
     @POST
     @Path("new")
-    public String newPlaylist(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("title") String title) {
-        return title;
+    public String newPlaylist(@CookieParam("sessionToken") String sessionToken, @FormDataParam("title") String title) {
+        int userID = validateSessionToken(sessionToken);
+        try {
+            PreparedStatement ps1 = Main.db.prepareStatement("INSERT INTO Playlists (userID, playlistName) VALUES (?,?)");
+            ps1.setInt(1,userID);
+            ps1.setString(2,title);
+            ps1.executeUpdate();
+            return "{\"SUCCESS\": \"New Playlist made. \"}";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact an admin with code P-NE. \"}";
+        }
+    }
+    @POST
+    @Path("validateSessionToken")
+    public static int validateSessionToken(@CookieParam("sessionToken") String sessionToken) {
+        System.out.println("Invoked playlist.validateSessionCookie(), cookie value " + sessionToken);
+
+        try {
+            PreparedStatement statement = Main.db.prepareStatement(
+                    "SELECT userID FROM Users WHERE sessionToken =?"
+            );
+            statement.setString(1,sessionToken);
+            ResultSet resultSet = statement.executeQuery();
+            System.out.println("userID is "+resultSet.getInt("UserID"));
+            return resultSet.getInt("UserID");
+        } catch (Exception e) {
+            System.out.println("Database error" + e.getMessage());
+            return -1; // rogue value for errors
+        }
+    }
+    @GET
+    @Path("get")
+    public String getPlaylist(@CookieParam("sessionToken") String sessionToken) {
+        System.out.println("Playlist.getPlaylist() was Invoked.");
+        int userID = validateSessionToken(sessionToken);
+        System.out.println(userID);
+        if (userID==-1) {
+            return "{\"Error\": \"Could not validate user. \"}";
+        }
+        try {
+            PreparedStatement ps1 = Main.db.prepareStatement("SELECT playlistID,playlistName FROM Playlists WHERE userID = ?");
+            ps1.setInt(1,userID);
+            ResultSet resultSet = ps1.executeQuery();
+            JSONArray response = convertToJSONArray(resultSet);
+            System.out.println(response);
+            return response.toString();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact admin with code P-GP. \"}";
+        }
+    }
+    @GET
+    @Path("getSongs")
+    public String getSongs(@FormDataParam("playlistID") int playlistID, @CookieParam("sessionToken") String sessionToken) {
+        System.out.println("Playlist.getSongs() was Invoked.");
+        int userID = validateSessionToken(sessionToken);
+        if (userID==-1) {
+            return "{\"Error\": \"Could not validate user. \"}";
+        }
+        try {
+            PreparedStatement ps1 = Main.db.prepareStatement("SELECT songs FROM PlaylistSongs WHERE playlistID = ?");
+            ps1.setInt(1,playlistID);
+            ResultSet resultSet = ps1.executeQuery();
+            JSONArray response = convertToJSONArray(resultSet);
+            return response.toString();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "{\"Error\": \"Something went wrong. Please contact admin with code P-GS. \"}";
+        }
     }
 }

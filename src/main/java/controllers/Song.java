@@ -122,7 +122,7 @@ public class Song {
             PreparedStatement statement = Main.db.prepareStatement("SELECT songID, userID, songName, songLength, songFile FROM Songs WHERE songName LIKE ?");
             PreparedStatement statement2 = Main.db.prepareStatement("SELECT Users.username FROM Users WHERE userID = (SELECT Songs.userID FROM Songs WHERE songName LIKE ?)");
 
-            statement.setString(1,'%' + searchString.toLowerCase()+'%');
+            statement.setString(1,'%' + searchString.toLowerCase()+'%'); //% is wildcard for finding strings of shared characters
             ResultSet resultSet = statement.executeQuery();
             JSONArray response = convertToJSONArray(resultSet);
             System.out.println(response);
@@ -138,7 +138,7 @@ public class Song {
             songDetails.put("details",response);
             songDetails.put("username",response2);
 
-            System.out.println(songDetails);
+            System.out.println(response);
             return response.toString();
             //return songDetails.toString();
 
@@ -170,13 +170,13 @@ public class Song {
     }
     @POST
     @Path("trackPlay")
-    public String trackPlay(@FormDataParam("songID") int songID) {
+    public String trackPlay(@FormDataParam("songID") Integer songID) {
         System.out.println("Songs.trackPlay() Invoked.");
         try {
             PreparedStatement statement = Main.db.prepareStatement("UPDATE Analytics SET plays = plays + 1 WHERE songID = ?");
             statement.setInt(1, songID);
             statement.executeUpdate();
-            return "Play updated";
+            return "{\"SUCCESS\": \"Play successfully added. \"}";
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "{\"Error\": \"Something went wrong. Please contact admins with code S-TP. \"}";

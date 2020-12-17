@@ -27,15 +27,18 @@
         }
         function addPlay(songID) {
             console.log("addPlay() Invoked.");
-            console.log(parseInt(songID));
-            fetch("/song/trackPlay", {
+            var data = songID;
+            console.log(songID);
+            var url = "/song/trackPlay/";
+
+            fetch(url, {
                 method: "POST",
-                body: parseInt(songID),
+                body: data,
             }).then(response => {
                 return response;
             }).then(response => {
                 if (response.hasOwnProperty("Error")) {
-                    console.log("Failed to add play.");
+                    alert("Failed to add play.");
                 } else {
                     console.log(response);
                     console.log("Play added.")
@@ -78,6 +81,7 @@
                 if(response.hasOwnProperty("Error")) {
                     alert(JSON.stringify(response));
                 } else {
+                    console.log(response);
                     formatSongList(response);
                 }
             });
@@ -167,6 +171,8 @@
     <div class="footer">
         <a href="tsandcs.html">Terms & Conditions</a>
     </div>
+
+
 
 </body>
 </html>

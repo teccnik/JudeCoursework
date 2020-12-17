@@ -5,10 +5,129 @@
     <meta charset="UTF-8">
     <title></title>
     <script>
+        function pageLoad() {
+            console.log("pageLoad() Invoked.");
+            userGet();
+
+
+        }
+        function userGet() {
+            console.log("userGet() invoked");
+
+            const url = "/user/get";
+            fetch(url, {
+                method: "GET",
+            }).then(response => {                       //returns a promise
+                return response.json();                 //now return that promise to JSON
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {   //checks if response from server has a key "Error:"
+                    alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+                    window.open("login.html", "_self");
+                } else {
+                    fillUserDetails(response);
+                    getPlaylist();
+                }
+            });
+
+
+        }
+        function fillUserDetails(data) {
+            console.log("invoked fillUserDetails()");
+            console.log(data);
+
+            document.getElementById("username").innerHTML = data.username; // filling user details into userDetails form
+            document.getElementById("email").innerHTML = data.email;
+            document.getElementById("userID").innerHTML = data.userID;
+
+        }
+
+        function formatPlaylist(data) {
+            console.log("Invoked formatPlayist()");
+            console.log(data);
+
+            let dataHTML = "";
+            for (let item of data) {
+                console.log(item);
+                dataHTML += "<option>" + item.playlistName + "</option>";
+                var playlistID = item.playlistID;
+            }
+            console.log(dataHTML);
+            document.getElementById("playlistSelect").innerHMTL = dataHTML;
+        }
+        function getSelect() {
+            var playlistSelect  = document.getElementById('pSelect').value;
+            postSelect(playlistSelect);
+        }
+        /*function postSelect(pSelect) {
+            console.log("postSelect() Invoked.");
+
+            const url = "/playlist/getSongs";
+            console.log(pSelect);
+            fetch(url + pSelect, {
+                method: "GET",
+            }).then(response => {
+                return response.json();
+            }).then(response => {
+                if (response.hasOwnProperty("Error")) {
+                    alert(JSON.stringify(response));
+                } else {
+                    formatPlaylist(response);
+                }
+            });
+        }*/
+        function getPlaylist() {
+            console.log("invoked getPlaylist()");
+
+            const url = "/playlist/get/";
+            fetch(url, {
+                method: "GET",
+            }).then(response=> {
+                return response.json()
+            }).then(response=> {
+                if (response.hasOwnProperty("Error")) {
+                    alert(JSON.stringify(response));
+                } else {
+                    console.log(response);
+                    formatPlaylist(response);
+                }
+            });
+        }
+        function formValidate() {
+            console.log("formValidate() Invoked");
+            let valid = true;
+
+            document.getElementById("playlistTitleValidationText").innerHTML = "";
+            var playlistTitle = document.getElementById("title");
+            if (playlistTitle===""){
+                document.getElementById("playlistTitleValidationText").innerHTML = "Please enter a playlist title.";
+                valid = false;
+            }
+            if (valid===true) {
+                pPlaylist();
+            }
+        }
+        function pPlaylist() {
+            console.log("pPlaylist() Invoked.");
+            var formData = new FormData(document.getElementById('playlistForm'));
+            var url = "/playlist/new";
+
+            fetch(url, {
+                method:"POST", body: formData,
+            }).then(response=> {
+                return response.json();
+            }).then(response=> {
+                if (response.hasOwnProperty("Error")) {
+                    alert("an error occurred.");
+                } else {
+                    alert("Playlist created.");
+                    window.open("user.html","_self");
+                }
+            })
+        }
 
     </script>
 </head>
-<body>
+<body onload='pageLoad();'>
 <div class="topnav">
     <a href="index.html">Home</a>
     <a href="forumHome.html">Forum</a>
@@ -20,6 +139,29 @@
     <br>
     <img src="img/WYLT logo.png" alt="Site Logo" class="logo">
 
+<div id="userDetails">
+    <u class="sh">Username: </u> <div id="username"></div>
+    <u class="sh">UserID: </u> <div id="userID"></div>
+    <u class="sh">Email: </u> <div id="email"></div>
+</div>
+<div id="playlistDiv">
+    <form id="playlist-select">
+        <label for="pSelect">Select a playlist</label>
+        <select name="pSelect" id="pSelect">
+            <div id="playlistSelect">
+
+            </div>
+
+        </select>
+    </form>
+    <button class="button" id="playlistSubmit" onlick="">SELECT PLAYLIST</button>
+</div>
+
+<form id="playlistForm">
+    <label for="title"></label><input type="text" id="title" name="title" placeholder="Playlist Title...">
+    <div id="playlistTitleValidationText"></div>
+</form>
+<button class="button" onclick="formValidate();">CREATE PLAYLIST</button>
 
 </body>
 </html>
