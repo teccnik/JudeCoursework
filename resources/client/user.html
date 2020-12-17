@@ -45,15 +45,19 @@
             console.log("Invoked formatPlayist()");
             console.log(data);
 
-            let dataHTML = "";
+            let html = "";
             for (let item of data) {
-                console.log(item);
-                dataHTML += "<option>" + item.playlistName + "</option>";
-                var playlistID = item.playlistID;
+                html+= "<option value=" + item.playlistID + ">" + item.playlistName + "</option>"
             }
-            console.log(dataHTML);
-            document.getElementById("playlistSelect").innerHMTL = dataHTML;
+            document.getElementById("ddlCategories").innerHTML = html;
+
+
+
         }
+
+
+
+
         function getSelect() {
             var playlistSelect  = document.getElementById('pSelect').value;
             postSelect(playlistSelect);
@@ -75,6 +79,7 @@
                 }
             });
         }*/
+
         function getPlaylist() {
             console.log("invoked getPlaylist()");
 
@@ -144,18 +149,20 @@
     <u class="sh">UserID: </u> <div id="userID"></div>
     <u class="sh">Email: </u> <div id="email"></div>
 </div>
-<div id="playlistDiv">
-    <form id="playlist-select">
-        <label for="pSelect">Select a playlist</label>
-        <select name="pSelect" id="pSelect">
-            <div id="playlistSelect">
 
-            </div>
 
-        </select>
-    </form>
+<p>Select a playlist:</p>
+
+<select name="ddlCategories" id="ddlCategories">
+</select>
+
     <button class="button" id="playlistSubmit" onlick="">SELECT PLAYLIST</button>
-</div>
+
+
+
+
+
+
 
 <form id="playlistForm">
     <label for="title"></label><input type="text" id="title" name="title" placeholder="Playlist Title...">
