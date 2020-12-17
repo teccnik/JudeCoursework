@@ -81,9 +81,9 @@ public class Playlist {
         }
     }
     @GET
-    @Path("getSongs")
-    public String getSongs(@FormDataParam("playlistID") int playlistID, @CookieParam("sessionToken") String sessionToken) {
-        System.out.println("Playlist.getSongs() was Invoked.");
+    @Path("getSongs/{playlistID}")
+    public String getSongs(@PathParam("playlistID") int playlistID, @CookieParam("sessionToken") String sessionToken) {
+        System.out.println("Playlist.getSongs() was Invoked for playlistID " + playlistID);
         int userID = validateSessionToken(sessionToken);
         if (userID==-1) {
             return "{\"Error\": \"Could not validate user. \"}";
@@ -93,6 +93,16 @@ public class Playlist {
             ps1.setInt(1,playlistID);
             ResultSet resultSet = ps1.executeQuery();
             JSONArray response = convertToJSONArray(resultSet);
+
+            /*
+            PreparedStatement ps2 = Main.db.prepareStatement("SELECT Users.username FROM Users WHERE userID = (SELECT Songs.userID From Songs WHERE songID = (SELECT PlaylistSongs.songID FROM PlaylistSongs = ?))");
+            ps2.setInt(1,playlistID);
+            ResultSet resultSet2 = ps2.executeQuery();
+            JSONArray r2 = convertToJSONArray(resultSet2);
+            */
+
+
+            //System.out.println(r1.addAll(r2));
             return response.toString();
         } catch (Exception e) {
             System.out.println(e.getMessage());

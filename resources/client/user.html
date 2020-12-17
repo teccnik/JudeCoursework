@@ -49,23 +49,22 @@
             for (let item of data) {
                 html+= "<option value=" + item.playlistID + ">" + item.playlistName + "</option>"
             }
-            document.getElementById("ddlCategories").innerHTML = html;
-
-
-
+            document.getElementById("pSelect").innerHTML = html;
         }
 
 
 
 
         function getSelect() {
+            console.log("getSelect() Invoked.");
             var playlistSelect  = document.getElementById('pSelect').value;
+            console.log(playlistSelect);
             postSelect(playlistSelect);
         }
-        /*function postSelect(pSelect) {
+        function postSelect(pSelect) {
             console.log("postSelect() Invoked.");
 
-            const url = "/playlist/getSongs";
+            const url = "/playlist/getSongs/";
             console.log(pSelect);
             fetch(url + pSelect, {
                 method: "GET",
@@ -75,10 +74,21 @@
                 if (response.hasOwnProperty("Error")) {
                     alert(JSON.stringify(response));
                 } else {
-                    formatPlaylist(response);
+                    console.log(response);
+                    formatPlaylistSongs(response);
                 }
             });
-        }*/
+        }
+        function formatPlaylistSongs(data) {
+            console.log("Invoked formatPlaylistSongs() with data: " + data);
+
+            let dataHTML="<tr><td> Song</td><td>Artist</td></tr>";
+            for (let item of data) {
+                console.log(item);
+                dataHTML += "<tr><td>" + item.songs +"</td></tr>";
+            }
+            document.getElementById("playlistSongTable").innerHTML = dataHTML;
+        }
 
         function getPlaylist() {
             console.log("invoked getPlaylist()");
@@ -153,10 +163,10 @@
 
 <p>Select a playlist:</p>
 
-<select name="ddlCategories" id="ddlCategories">
+<select name="pSelect" id="pSelect">
 </select>
 
-    <button class="button" id="playlistSubmit" onlick="">SELECT PLAYLIST</button>
+<button class="button"  id="playlistSubmit" onclick="getSelect();">SELECT PLAYLIST</button>
 
 
 
@@ -169,6 +179,12 @@
     <div id="playlistTitleValidationText"></div>
 </form>
 <button class="button" onclick="formValidate();">CREATE PLAYLIST</button>
+
+<br>
+<br>
+<table id="playlistSongTable">
+
+</table>
 
 </body>
 </html>
