@@ -94,12 +94,13 @@ public class Playlist {
             ResultSet resultSet = ps1.executeQuery();
             JSONArray response = convertToJSONArray(resultSet);
 
-            /*
+
             PreparedStatement ps2 = Main.db.prepareStatement("SELECT Users.username FROM Users WHERE userID = (SELECT Songs.userID From Songs WHERE songID = (SELECT PlaylistSongs.songID FROM PlaylistSongs = ?))");
             ps2.setInt(1,playlistID);
             ResultSet resultSet2 = ps2.executeQuery();
             JSONArray r2 = convertToJSONArray(resultSet2);
-            */
+            System.out.println(r2.toString());
+
 
 
             //System.out.println(r1.addAll(r2));
