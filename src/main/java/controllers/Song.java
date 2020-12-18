@@ -154,7 +154,7 @@ public class Song {
     public String getTrending() {
         System.out.println("Song.getTrending() Invoked.");
         try {
-            PreparedStatement statement = Main.db.prepareStatement("SELECT TOP 10 * FROM Analytics ORDER BY likes DESC");
+            PreparedStatement statement = Main.db.prepareStatement("SELECT TOP 10 * FROM Analytics ORDER BY plays DESC");
             ResultSet resultSet = statement.executeQuery();
             JSONArray response = convertToJSONArray(resultSet);
             System.out.println(response);

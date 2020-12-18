@@ -85,7 +85,7 @@
             let dataHTML="<tr><td> Song</td><td>Artist</td></tr>";
             for (let item of data) {
                 console.log(item);
-                dataHTML += "<tr><td>" + item.songs +"</td></tr>";
+                dataHTML += "<tr><td>" + item.songName +"</td><td>"+ item.userID + "</td></tr>";
             }
             document.getElementById("playlistSongTable").innerHTML = dataHTML;
         }

@@ -89,17 +89,20 @@ public class Playlist {
             return "{\"Error\": \"Could not validate user. \"}";
         }
         try {
-            PreparedStatement ps1 = Main.db.prepareStatement("SELECT songs FROM PlaylistSongs WHERE playlistID = ?");
+            PreparedStatement ps1 = Main.db.prepareStatement("SELECT Songs.userID, Songs.songName, Songs.songFile FROM Songs JOIN PlaylistSongs on Songs.SongID = PlaylistSongs.songID  JOIN Users ON Users.userID = Songs.userID  WHERE PlaylistSongs.playlistID = ?");
             ps1.setInt(1,playlistID);
             ResultSet resultSet = ps1.executeQuery();
             JSONArray response = convertToJSONArray(resultSet);
+            System.out.println(response.toString());
 
 
+            /*
             PreparedStatement ps2 = Main.db.prepareStatement("SELECT Users.username FROM Users WHERE userID = (SELECT Songs.userID From Songs WHERE songID = (SELECT PlaylistSongs.songID FROM PlaylistSongs = ?))");
             ps2.setInt(1,playlistID);
             ResultSet resultSet2 = ps2.executeQuery();
             JSONArray r2 = convertToJSONArray(resultSet2);
             System.out.println(r2.toString());
+            */
 
 
 
