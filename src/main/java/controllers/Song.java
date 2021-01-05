@@ -47,7 +47,7 @@ public class Song {
 
         try {
             PreparedStatement statement = Main.db.prepareStatement("INSERT INTO Songs (userID,songName,songFile) VALUES(?,?,?)");
-            PreparedStatement statement2 = Main.db.prepareStatement("INSERT INTO Analytics(likes,comments,saves) VALUES(0,0,0)");
+            PreparedStatement statement2 = Main.db.prepareStatement("INSERT INTO Analytics(likes,comments,saves,plays) VALUES(0,0,0,0)");
             statement.setInt(1, userID);
             statement.setString(2, fileName.substring(0, dot));  //set song name to name of file less the extension
             statement.setString(3, savedFileName);
@@ -154,7 +154,7 @@ public class Song {
     public String getTrending() {
         System.out.println("Song.getTrending() Invoked.");
         try {
-            PreparedStatement statement = Main.db.prepareStatement("SELECT TOP 10 * FROM Analytics ORDER BY plays DESC");
+            PreparedStatement statement = Main.db.prepareStatement("SELECT 10 * FROM Analytics ORDER BY plays DESC");
             ResultSet resultSet = statement.executeQuery();
             JSONArray response = convertToJSONArray(resultSet);
             System.out.println(response);
@@ -169,8 +169,8 @@ public class Song {
         }
     }
     @POST
-    @Path("trackPlay")
-    public String trackPlay(@FormDataParam("songID") Integer songID) {
+    @Path("trackPlay/{songID}")
+    public String trackPlay(@PathParam("songID") Integer songID) {
         System.out.println("Songs.trackPlay() Invoked.");
         try {
             PreparedStatement statement = Main.db.prepareStatement("UPDATE Analytics SET plays = plays + 1 WHERE songID = ?");

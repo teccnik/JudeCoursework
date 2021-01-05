@@ -1,3 +1,4 @@
+// Test for pull success check
 package controllers;
 
 import server.Main;
@@ -59,12 +60,11 @@ public class User {
     }
     @POST
     @Path("userid")
-    public static int getUserID(@FormDataParam("username") String username, @FormDataParam("password") String password) {
+    public static int getUserID(@FormDataParam("username") String username) {
         System.out.println("User.getUserID() Invoked");
         try {
-            PreparedStatement statement = Main.db.prepareStatement( "SELECT UserID FROM Users WHERE username = ? AND password = ?");
+            PreparedStatement statement = Main.db.prepareStatement( "SELECT UserID FROM Users WHERE username = ?");
             statement.setString(1, username);
-            statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
 
             if (!resultSet.next()) {
@@ -93,14 +93,15 @@ public class User {
     }
     @POST
     @Path("validateSessionToken")
-    public static int validateSessionToken(@CookieParam("sessionToken") String sessionToken) {
-        System.out.println("Invoked User.validateSessionCookie(), cookie value " + sessionToken);
+    public static int validateSessionToken(Cookie sessionToken) {
+        String token = sessionToken.getValue();
+        System.out.println("Invoked User.validateSessionCookie(), cookie value " + token);
 
         try {
             PreparedStatement statement = Main.db.prepareStatement(
                     "SELECT userID FROM Users WHERE sessionToken =?"
             );
-            statement.setString(1,sessionToken);
+            statement.setString(1,token);
             ResultSet resultSet = statement.executeQuery();
             System.out.println("userID is "+resultSet.getInt("UserID"));
             return resultSet.getInt("UserID");
@@ -131,6 +132,7 @@ public class User {
 
         }
     }
+
     @GET
     @Path("name")
     public String userName(@CookieParam("sessionToken") String sessionToken) {
@@ -171,7 +173,7 @@ public class User {
     }
     @POST
     @Path("update")
-    public String userUpdate(@CookieParam("sessionToken") String sessionToken, @FormDataParam("username") String username, @FormDataParam("password") String password) {
+    public String userUpdate(@CookieParam("sessionToken") Cookie sessionToken, @FormDataParam("username") String username, @FormDataParam("password") String password) {
         System.out.println("User.userUpdate() has been Invoked.");
         if (sessionToken==null) {
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UPD)\"}";
@@ -188,18 +190,19 @@ public class User {
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UPD)\"}";
         }
     }
-    @GET
+    @POST
     @Path("delete")
-    public String userDelete(@CookieParam("sessionToken") String sessionToken) {
+    public String userDelete(@CookieParam("sessionToken") Cookie sessionToken) {
         System.out.println("User.userDelete() Invoked.");
         try {
             PreparedStatement statement = Main.db.prepareStatement("DELETE FROM Users WHERE sessionToken = ?");
-            statement.setString(1,sessionToken);
+            statement.setString(1,sessionToken.getValue());
             statement.executeUpdate();
-            return "{\"Success\": \"User Deleted.\"}";
+            return "{\"Success\": \"Account Deleted.\"}";
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "{\"Error\": \"Something went wrong. Contact an admin. (U-UDT).\"}";
         }
     }
+
 }

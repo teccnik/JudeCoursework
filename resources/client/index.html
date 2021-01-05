@@ -31,9 +31,8 @@
             console.log(songID);
             var url = "/song/trackPlay/";
 
-            fetch(url, {
+            fetch(url + data, {
                 method: "POST",
-                body: data,
             }).then(response => {
                 return response;
             }).then(response => {
@@ -95,7 +94,7 @@
             for (let item of data) {
                 console.log(item);
                 let file = item.songFile;
-                dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.username + "</td><td><audio controls class='playSong' id='playSong' src=" +item.songFile+"></audio> </td></tr>";
+                dataHTML += "<tr><td>" + item.songName + "</td><td>" + item.username + "</td><td><audio onplay=\"addPlay(" + item.songID + ")\" controls class='playSong' id='playSong' src=" +item.songFile+"></audio> </td></tr>";
                 songIDParse = item.songID;
                 console.log(songIDParse);
             }
