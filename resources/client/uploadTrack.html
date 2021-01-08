@@ -23,6 +23,9 @@
                 if (response.startsWith('Error')) {
                     alert(response);
                  }
+                if (response.startsWith('{\"Error\": \"Could not validate user.\"}')) {
+                    alert(response);
+                }
                 window.open("index.html","_self");
             });
         }

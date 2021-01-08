@@ -42,7 +42,8 @@ public class Song {
 
         int userID = validateSessionCookie(sessionToken);
         if (userID == -1) {
-            return "{\"Error\": \"Could not validate user. \"}";
+            System.out.println("Error validating user, or user not logged in.");
+            return "{\"Error\": \"Could not validate user.\"}";
         }
 
         try {
